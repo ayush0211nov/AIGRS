@@ -1,0 +1,206 @@
+{
+  "name": "Admin Quick Start Example",
+  "description": "Save token from registration response and use in these requests",
+  "variables": {
+    "baseUrl": "http://localhost:8080",
+    "adminToken": "YOUR_ACCESS_TOKEN_HERE (save from registration)"
+  },
+  "_instructions": [
+    "1. Run: .\\get-admin-token.ps1 to get admin token",
+    "2. Token saves to admin_token.txt",
+    "3. Replace {adminToken} with contents of admin_token.txt",
+    "4. Copy any request below and run in PowerShell"
+  ],
+  "common_org_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "requests": {
+    "1_register_admin": {
+      "name": "Register New Admin User",
+      "method": "POST",
+      "url": "http://localhost:8080/api/v1/auth/register",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "Admin Test User",
+        "email": "admin@demo.gov",
+        "phone": "+1-555-9999",
+        "password": "AdminPass123!",
+        "orgId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "role": "ADMIN"
+      },
+      "curl": "curl.exe -X POST http://localhost:8080/api/v1/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"Admin Test User\",\"email\":\"admin@demo.gov\",\"phone\":\"+1-555-9999\",\"password\":\"AdminPass123!\",\"orgId\":\"f47ac10b-58cc-4372-a567-0e02b2c3d479\",\"role\":\"ADMIN\"}'"
+    },
+    "2_login_admin": {
+      "name": "Login as Admin",
+      "method": "POST",
+      "url": "http://localhost:8080/api/v1/auth/login",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "phone": "+1-555-9999",
+        "password": "AdminPass123!"
+      },
+      "curl": "curl.exe -X POST http://localhost:8080/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"phone\":\"+1-555-9999\",\"password\":\"AdminPass123!\"}'"
+    },
+    "3_get_dashboard_stats": {
+      "name": "Get Dashboard Statistics",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/dashboard/stats",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Real-time dashboard metrics (cached 5 minutes)",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/dashboard/stats -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "4_get_dashboard_charts": {
+      "name": "Get Dashboard Charts",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/dashboard/charts",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Chart data: daily trends, priority breakdown",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/dashboard/charts -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "5_list_all_grievances": {
+      "name": "List All Grievances (Admin View)",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/grievances?page=0&size=20",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "All grievances with all filters and pagination",
+      "curl": "curl.exe -X GET \"http://localhost:8080/api/v1/admin/grievances?page=0&size=20\" -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "6_list_staff": {
+      "name": "List Staff Members",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/staff",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Staff list with performance metrics (avg rating, assigned count)",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/staff -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "7_staff_performance": {
+      "name": "Get Staff Performance Details",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/staff/{staffId}/performance",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Individual staff performance metrics (from staff listing above)",
+      "note": "Replace {staffId} with a real staff ID from the staff listing",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/staff/{staffId}/performance -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "8_list_departments": {
+      "name": "List Departments",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/departments",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/departments -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "9_list_categories": {
+      "name": "List Categories",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/categories",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/categories -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "10_create_category": {
+      "name": "Create New Category",
+      "method": "POST",
+      "url": "http://localhost:8080/api/v1/admin/categories",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "name": "Infrastructure",
+        "description": "Roads, water, electricity issues",
+        "slaHours": 48,
+        "departmentId": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "note": "Replace departmentId with actual department ID from /admin/departments",
+      "curl": "curl.exe -X POST http://localhost:8080/api/v1/admin/categories -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\" -d '{\"name\":\"Infrastructure\",\"description\":\"Roads, water, electricity issues\",\"slaHours\":48,\"departmentId\":\"550e8400-e29b-41d4-a716-446655440000\"}'"
+    },
+    "11_get_heatmap": {
+      "name": "Get Heatmap Data",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/analytics/heatmap",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Grievance location heatmap data for visualization",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/analytics/heatmap -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "12_get_sla_config": {
+      "name": "Get SLA Configuration",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/sla/config",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "description": "Current SLA configuration for the organization",
+      "curl": "curl.exe -X GET http://localhost:8080/api/v1/admin/sla/config -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\""
+    },
+    "13_update_sla_config": {
+      "name": "Update SLA Configuration",
+      "method": "PUT",
+      "url": "http://localhost:8080/api/v1/admin/sla/config",
+      "headers": {
+        "Authorization": "Bearer {adminToken}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "LOW": 72,
+        "MEDIUM": 48,
+        "HIGH": 24,
+        "CRITICAL": 4
+      },
+      "description": "SLA hours for different priority levels",
+      "curl": "curl.exe -X PUT http://localhost:8080/api/v1/admin/sla/config -H \"Authorization: Bearer {adminToken}\" -H \"Content-Type: application/json\" -d '{\"LOW\":72,\"MEDIUM\":48,\"HIGH\":24,\"CRITICAL\":4}'"
+    },
+    "14_export_csv": {
+      "name": "Export Grievances as CSV",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/reports/export?format=csv",
+      "headers": {
+        "Authorization": "Bearer {adminToken}"
+      },
+      "description": "Export all grievances as CSV file",
+      "curl": "curl.exe -X GET \"http://localhost:8080/api/v1/admin/reports/export?format=csv\" -H \"Authorization: Bearer {adminToken}\" -OutFile grievances.csv"
+    },
+    "15_export_excel": {
+      "name": "Export Grievances as Excel",
+      "method": "GET",
+      "url": "http://localhost:8080/api/v1/admin/reports/export?format=excel",
+      "headers": {
+        "Authorization": "Bearer {adminToken}"
+      },
+      "description": "Export all grievances as Excel file",
+      "curl": "curl.exe -X GET \"http://localhost:8080/api/v1/admin/reports/export?format=excel\" -H \"Authorization: Bearer {adminToken}\" -OutFile grievances.xlsx"
+    }
+  },
+  "quick_start": {
+    "step_1": "Run: .\\get-admin-token.ps1",
+    "step_2": "Copy token from admin_token.txt",
+    "step_3": "$TOKEN = Get-Content admin_token.txt",
+    "step_4": "Try any curl command with -H \"Authorization: Bearer $TOKEN\"",
+    "example": "curl.exe -X GET http://localhost:8080/api/v1/admin/dashboard/stats -H \"Authorization: Bearer $TOKEN\""
+  }
+}

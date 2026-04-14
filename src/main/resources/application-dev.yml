@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.aigrs.backend: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Development: Create default test data on startup
+app:
+  sms:
+    enabled: false
+  dev:
+    seed-test-data: false
+  
+# Relaxed CORS for development
+server:
+  error:
+    include-message: always
+    include-stacktrace: on_param

@@ -1,0 +1,22 @@
+# Maven build output
+/target/
+
+# Logs
+*.log
+/logs/
+
+# IDE/editor
+/.idea/
+*.iml
+/.vscode/
+
+# Local utilities
+/cloudflared.exe
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment/local overrides
+.env
+.env.*

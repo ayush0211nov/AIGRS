@@ -1,0 +1,1002 @@
+{
+  "info": {
+    "_postman_id": "aigrs-backend-collection",
+    "name": "AIGRS Backend API",
+    "description": "AI Grievance Redressal System - Production-grade Backend API Collection\n\nVersion: 1.0.0\nBase URL: http://localhost:8080/api/v1\n\nFeatures:\n- Multi-tenant grievance management\n- AI sentiment analysis\n- SLA tracking\n- File upload with compression\n- Multi-channel notifications\n- Advanced search and reporting",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "aigrs-2024"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"9876543210\",\n  \"email\": \"john@example.com\",\n  \"password\": \"SecurePass123!\",\n  \"orgId\": \"{{orgId}}\",\n  \"role\": \"CITIZEN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user (citizen/staff/admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"password\": \"SecurePass123!\",\n  \"orgId\": \"{{orgId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with phone and password"
+          },
+          "response": []
+        },
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/send-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "send-otp"]
+            },
+            "description": "Send 6-digit OTP to phone (dev: logs to console)"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "verify-otp"]
+            },
+            "description": "Verify OTP and get JWT tokens"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh-token"]
+            },
+            "description": "Exchange refresh token for new access token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Logout and blacklist current token"
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "forgot-password"]
+            },
+            "description": "Send password reset OTP"
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewSecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "reset-password"]
+            },
+            "description": "Reset password using OTP verification"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Grievances",
+      "item": [
+        {
+          "name": "Submit Grievance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Poor Water Quality\",\n  \"description\": \"The tap water in my area has been discolored for the past week\",\n  \"location\": \"123 Main Street, Apt 4B\",\n  \"latitude\": 28.7041,\n  \"longitude\": 77.1025,\n  \"categoryId\": \"{{categoryId}}\",\n  \"departmentId\": \"{{departmentId}}\",\n  \"priority\": \"HIGH\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances"]
+            },
+            "description": "Submit a new grievance"
+          },
+          "response": []
+        },
+        {
+          "name": "List Grievances",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/grievances?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED",
+                  "disabled": true
+                },
+                {
+                  "key": "priority",
+                  "value": "HIGH",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List grievances (paginated, filterable)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Grievance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}"]
+            },
+            "description": "Get single grievance with full details"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Grievance Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"remarks\": \"Issue assigned to water department\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "status"]
+            },
+            "description": "Update grievance status (staff/admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Please provide photos of the affected area\",\n  \"isInternal\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "comments"]
+            },
+            "description": "Add comment to grievance (public or internal)"
+          },
+          "response": []
+        },
+        {
+          "name": "Rate Grievance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 4,\n  \"feedback\": \"Good response, issue resolved quickly\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/ratings",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "ratings"]
+            },
+            "description": "Rate resolved grievance (1-5 stars)"
+          },
+          "response": []
+        },
+        {
+          "name": "Resolve Grievance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resolutionSummary\": \"Water supply has been restored and quality verified\",\n  \"attachmentIds\": [\"file-uuid-1\", \"file-uuid-2\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "resolve"]
+            },
+            "description": "Mark grievance as resolved"
+          },
+          "response": []
+        },
+        {
+          "name": "Reopen Grievance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Issue reoccurred, water is discolored again\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/reopen",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "reopen"]
+            },
+            "description": "Reopen resolved grievance (within 48 hours)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Files",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "grievanceId",
+                  "value": "{{grievanceId}}",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/files/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "upload"]
+            },
+            "description": "Upload file (image/video, max 50MB). Supported: JPEG, PNG, MP4"
+          },
+          "response": []
+        },
+        {
+          "name": "Download File",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/files/{{fileId}}/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "{{fileId}}", "download"]
+            },
+            "description": "Download file with signed URL (24h expiry)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete File",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/files/{{fileId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["files", "{{fileId}}"]
+            },
+            "description": "Delete file (owner or admin only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Grievances",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/search?query=water&status=SUBMITTED&priority=HIGH&page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "water",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED",
+                  "disabled": true
+                },
+                {
+                  "key": "priority",
+                  "value": "HIGH",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "{{categoryId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "departmentId",
+                  "value": "{{departmentId}}",
+                  "disabled": true
+                },
+                {
+                  "key": "fromDate",
+                  "value": "2024-01-01",
+                  "disabled": true
+                },
+                {
+                  "key": "toDate",
+                  "value": "2024-12-31",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Full-text search with filters"
+          },
+          "response": []
+        },
+        {
+          "name": "Search by Tracking ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/search/tracking/GRV-2024-000001",
+              "host": ["{{baseUrl}}"],
+              "path": ["search", "tracking", "GRV-2024-000001"]
+            },
+            "description": "Search grievance by tracking ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Staff",
+      "item": [
+        {
+          "name": "List Staff Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/staff",
+              "host": ["{{baseUrl}}"],
+              "path": ["staff"]
+            },
+            "description": "List all active staff members in organization"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Staff Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/staff/{{staffId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["staff", "{{staffId}}"]
+            },
+            "description": "Get staff member details and workload"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Grievance to Staff",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staffId\": \"{{staffId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/grievances/{{grievanceId}}/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["grievances", "{{grievanceId}}", "assign"]
+            },
+            "description": "Assign grievance to staff member (manager/admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Notification Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailNotificationsEnabled\": true,\n  \"smsNotificationsEnabled\": false,\n  \"pushNotificationsEnabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/staff/{{staffId}}/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["staff", "{{staffId}}", "preferences"]
+            },
+            "description": "Update staff notification preferences"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "dashboard"]
+            },
+            "description": "Get dashboard statistics (cached, 5min TTL)"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Report - CSV",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/export?format=csv",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "csv"
+                }
+              ]
+            },
+            "description": "Export grievances as CSV"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Report - Excel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/export?format=excel",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "excel"
+                }
+              ]
+            },
+            "description": "Export grievances as Excel"
+          },
+          "response": []
+        },
+        {
+          "name": "Export Report - PDF",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/export?format=pdf",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "export"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "pdf"
+                }
+              ]
+            },
+            "description": "Export grievances as PDF"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Water Supply\",\n  \"description\": \"Issues related to water supply and quality\",\n  \"slaHours\": 48,\n  \"departmentId\": \"{{departmentId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "categories"]
+            },
+            "description": "Create grievance category (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Water Department\",\n  \"description\": \"Handles water supply and quality issues\",\n  \"headUserId\": \"{{staffId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/departments",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "departments"]
+            },
+            "description": "Create department (admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "categories"]
+            },
+            "description": "List all categories"
+          },
+          "response": []
+        },
+        {
+          "name": "List Departments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/departments",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "departments"]
+            },
+            "description": "List all departments"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "List user's notifications (paginated)"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "{{notificationId}}", "read"]
+            },
+            "description": "Mark single notification as read"
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/mark-all-read",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "mark-all-read"]
+            },
+            "description": "Mark all notifications as read"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/../..}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Check application health status"
+          },
+          "response": []
+        },
+        {
+          "name": "API Docs (Swagger)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/../.}/swagger-ui.html",
+              "host": ["{{baseUrl}}"],
+              "path": ["swagger-ui.html"]
+            },
+            "description": "View API documentation (Swagger UI)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-populate timestamp if needed",
+          "if (!pm.environment.get('timestamp')) {",
+          "    pm.environment.set('timestamp', new Date().toISOString());",
+          "}"
+        ]
+      }
+    }
+  ]
+}

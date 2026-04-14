@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 20px; }
+        .header { background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { padding: 20px 0; }
+        .alert { background-color: #ffebee; border-left: 4px solid #d32f2f; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .cta-button { display: inline-block; background-color: #d32f2f; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; margin-top: 20px; font-weight: bold; }
+        .footer { border-top: 1px solid #ddd; padding-top: 20px; margin-top: 20px; text-align: center; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ SLA Breach Alert</h1>
+        </div>
+
+        <div class="content">
+            <p>Dear <span th:text="${staffName}">Staff Member</span>,</p>
+
+            <div class="alert">
+                <strong>URGENT: SLA has been breached for the following grievance:</strong>
+            </div>
+
+            <p>
+                <strong>Tracking ID:</strong> <span th:text="${trackingId}">GRV-2024-000001</span><br>
+                <strong>Title:</strong> <span th:text="${title}">Grievance Title</span><br>
+                <strong>Breached By:</strong> <span th:text="${breachedHours}">2</span> hours
+            </p>
+
+            <p>
+                <a href="https://aigrs.local/grievances/${trackingId}" class="cta-button">Take Action Now</a>
+            </p>
+
+            <p style="color: #d32f2f; font-weight: bold;">
+                Immediate action is required to address this escalation.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 AIGRS - AI Grievance Redressal System</p>
+        </div>
+    </div>
+</body>
+</html>

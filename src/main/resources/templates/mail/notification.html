@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .grievance-info {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .grievance-info label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .footer {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Grievance Notification</h1>
+        </div>
+
+        <div class="content">
+            <p>Dear <span th:text="${userName}">User</span>,</p>
+
+            <p th:text="${message}">Your grievance has been updated.</p>
+
+            <div class="grievance-info" th:if="${trackingId}">
+                <label>Tracking ID</label>
+                <div style="font-size: 18px; font-weight: bold;" th:text="${trackingId}">GRV-2024-000001</div>
+
+                <label th:if="${title}">Title</label>
+                <div th:if="${title}" th:text="${title}">Grievance Title</div>
+
+                <label th:if="${status}">Status</label>
+                <div th:if="${status}">
+                    <span class="status-badge" th:text="${status}">SUBMITTED</span>
+                </div>
+
+                <label th:if="${priority}">Priority</label>
+                <div th:if="${priority}" th:text="${priority}">MEDIUM</div>
+
+                <label th:if="${category}">Category</label>
+                <div th:if="${category}" th:text="${category}">Service Quality</div>
+
+                <label th:if="${slaDeadline}">SLA Deadline</label>
+                <div th:if="${slaDeadline}" th:text="${#dates.format(slaDeadline, 'dd MMM yyyy, hh:mm a')}">31 Dec 2024, 02:00 PM</div>
+            </div>
+
+            <p th:if="${trackingId}">
+                <a th:href="|https://aigrs.local/grievances/${trackingId}|" class="cta-button">View Details</a>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 AIGRS - AI Grievance Redressal System. All rights reserved.</p>
+            <p>This is an automated notification. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

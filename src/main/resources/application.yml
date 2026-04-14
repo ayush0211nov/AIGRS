@@ -1,0 +1,133 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: aigrs-backend
+
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:aigrs}
+    username: ${DB_USERNAME:aigrs_user}
+    password: ${DB_PASSWORD:aigrs_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 5000ms
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 55MB
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:aigrs-super-secret-key-that-must-be-at-least-256-bits-long-for-hs256}
+  access-expiry: ${JWT_ACCESS_EXPIRY:86400}
+  refresh-expiry: ${JWT_REFRESH_EXPIRY:2592000}
+
+# Firebase Configuration
+firebase:
+  credentials-file-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}
+
+# AWS S3 Configuration
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET:aigrs-files}
+    region: ${AWS_S3_REGION:ap-south-1}
+    access-key: ${AWS_ACCESS_KEY:}
+    secret-key: ${AWS_SECRET_KEY:}
+
+# AI Service Configuration
+ai-service:
+  url: ${AI_SERVICE_URL:http://aigrs-ai-service:8000}
+  timeout: 10000
+
+# Application Configuration
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+  rate-limit:
+    requests-per-minute: 100
+  sms:
+    enabled: ${SMS_ENABLED:false}
+    provider: twilio
+  twilio:
+    account-sid: ${TWILIO_ACCOUNT_SID:}
+    auth-token: ${TWILIO_AUTH_TOKEN:}
+    phone-number: ${TWILIO_PHONE_NUMBER:}
+  api:
+    title: AIGRS Backend API
+    version: 1.0.0
+    description: AI Grievance Redressal System - Production-grade Backend
+    contact:
+      name: AIGRS Support
+      email: support@aigrs.com
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  use-management-port: false
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Logging
+logging:
+  level:
+    com.aigrs.backend: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: WARN

@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aigrs-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=aigrs
+      - DB_USERNAME=aigrs_user
+      - DB_PASSWORD=aigrs_pass
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=aigrs-super-secret-key-that-must-be-at-least-256-bits-long-for-hs256
+      - AI_SERVICE_URL=http://aigrs-ai-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - aigrs-network
+
+  # PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: aigrs-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=aigrs
+      - POSTGRES_USER=aigrs_user
+      - POSTGRES_PASSWORD=aigrs_pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U aigrs_user -d aigrs" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aigrs-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: aigrs-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aigrs-network
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  aigrs-network:
+    driver: bridge

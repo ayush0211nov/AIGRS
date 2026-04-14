@@ -1,0 +1,10 @@
+{
+  "title": "Pothole in Main Street",
+  "description": "Large pothole causing traffic hazards on Main Street near intersection",
+  "category": "ROAD_DAMAGE",
+  "priority": "HIGH",
+  "location": "Main Street, Demo City",
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "attachmentIds": []
+}
