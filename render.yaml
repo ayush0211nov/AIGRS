@@ -1,0 +1,72 @@
+services:
+  - type: web
+    name: aigrs-backend
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: LOGGING_FILE_NAME
+        value: /tmp/aigrs.log
+      - key: DB_HOST
+        fromDatabase:
+          name: aigrs-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: aigrs-postgres
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: aigrs-postgres
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: aigrs-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: aigrs-postgres
+          property: password
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: aigrs-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
+      - key: AI_SERVICE_URL
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_S3_REGION
+        value: ap-south-1
+      - key: AWS_ACCESS_KEY
+        sync: false
+      - key: AWS_SECRET_KEY
+        sync: false
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+
+  - type: redis
+    name: aigrs-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: aigrs-postgres
+    databaseName: aigrs
+    user: aigrs_user
+    plan: free
