@@ -1,0 +1,7 @@
+[build]
+dockerfile = "Dockerfile"
+
+[deploy]
+restartPolicyMaxRetries = 3
+healthCheckPath = "/actuator/health/liveness"
+healthCheckTimeout = 300
