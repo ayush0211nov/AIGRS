@@ -3,5 +3,5 @@ dockerfile = "Dockerfile"
 
 [deploy]
 restartPolicyMaxRetries = 3
-healthCheckPath = "/actuator/health/liveness"
-healthCheckTimeout = 300
+healthcheckPath = "/actuator/health/liveness"
+healthcheckTimeout = 300
