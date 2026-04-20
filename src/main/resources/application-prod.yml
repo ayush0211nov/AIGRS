@@ -66,6 +66,8 @@ management:
   health:
     redis:
       enabled: false
+    mail:
+      enabled: false
 
 springdoc:
   swagger-ui:
