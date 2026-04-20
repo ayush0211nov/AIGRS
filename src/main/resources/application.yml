@@ -8,12 +8,12 @@ spring:
     name: aigrs-backend
 
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:aigrs}
-    username: ${DB_USERNAME:aigrs_user}
-    password: ${DB_PASSWORD:aigrs_pass}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${PGHOST:${DB_HOST:localhost}}:${PGPORT:${DB_PORT:5432}}/${PGDATABASE:${DB_NAME:aigrs}}}
+    username: ${SPRING_DATASOURCE_USERNAME:${PGUSER:${DB_USERNAME:aigrs_user}}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${PGPASSWORD:${DB_PASSWORD:aigrs_pass}}}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -31,7 +31,7 @@ spring:
 
   data:
     redis:
-      url: ${REDIS_URL:}
+      url: ${REDIS_URL:redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}}
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
